@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>KDC AI Quiz — All-Time Records</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&family=Copse&family=Boogaloo&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+/* v12 font system — synced with host.html via localStorage 'kdcFont' */
+:root{--f-display:var(--f-display);--f-body:var(--f-body)}
+body.font-copse{--f-display:'Copse',serif;--f-body:'Copse',serif}
+body.font-boogaloo{--f-display:'Boogaloo',cursive;--f-body:'Boogaloo',cursive}
+body{background:radial-gradient(ellipse at 25% 15%,#1a0a3a 0%,#0a0a1a 55%,#0d0510 100%);color:#fff;font-family:'Lato',sans-serif;min-height:100vh;padding:0 0 60px}
+/* v12 nav buttons — match host.html style */
+.nav-btns{display:flex;gap:6px;align-items:center}
+.nav-btn{font-family:var(--f-body);font-size:11px;color:rgba(255,215,0,.7);text-decoration:none;padding:7px 16px;border-radius:6px;border:1px solid rgba(255,215,0,.3);background:rgba(255,215,0,.08);letter-spacing:.08em;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.nav-btn:hover{background:rgba(255,215,0,.2)}
+.nav-btn.close{color:rgba(239,68,68,.85);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)}
+.nav-btn.close:hover{background:rgba(239,68,68,.18)}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(1px 1px at 8% 12%,rgba(255,215,0,.4) 0%,transparent 100%),radial-gradient(1px 1px at 22% 38%,rgba(255,255,255,.25) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 55% 8%,rgba(255,215,0,.35) 0%,transparent 100%),radial-gradient(1px 1px at 78% 55%,rgba(255,255,255,.2) 0%,transparent 100%),radial-gradient(1px 1px at 42% 78%,rgba(255,215,0,.3) 0%,transparent 100%),radial-gradient(1px 1px at 88% 22%,rgba(255,255,255,.3) 0%,transparent 100%)}
+
+/* Header */
+.site-header{position:relative;z-index:2;padding:20px 32px;border-bottom:1px solid rgba(255,215,0,.15);display:flex;align-items:center;justify-content:space-between;background:rgba(10,10,26,.7);backdrop-filter:blur(10px)}
+.header-logo{font-family:var(--f-display);font-size:20px;background:linear-gradient(180deg,#FFD700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.06em}
+.header-sub{font-family:var(--f-body);font-size:10px;color:rgba(255,215,0,.5);letter-spacing:.2em;margin-top:3px}
+.home-link{font-family:var(--f-body);font-size:11px;color:rgba(255,215,0,.7);text-decoration:none;padding:7px 16px;border-radius:6px;border:1px solid rgba(255,215,0,.3);background:rgba(255,215,0,.08);letter-spacing:.1em;transition:all .15s}
+.home-link:hover{background:rgba(255,215,0,.2)}
+
+/* Main */
+.main{position:relative;z-index:2;max-width:1100px;margin:0 auto;padding:32px 24px}
+
+/* Section */
+.section-title{font-family:var(--f-display);font-size:22px;background:linear-gradient(180deg,#FFD700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;letter-spacing:.06em}
+.section-sub{font-family:var(--f-body);font-size:10px;color:rgba(255,215,0,.5);letter-spacing:.18em;text-transform:uppercase;margin-bottom:20px}
+
+/* Top Stats */
+.top-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.18);border-radius:12px;padding:16px 20px;text-align:center}
+.stat-num{font-family:var(--f-display);font-size:34px;background:linear-gradient(180deg,#FFD700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.stat-label{font-family:var(--f-body);font-size:10px;color:rgba(255,215,0,.5);letter-spacing:.15em;text-transform:uppercase;margin-top:6px}
+
+/* Podium */
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:14px;margin-bottom:32px;align-items:end}
+.pod{padding:20px 14px;border-radius:14px;text-align:center;border:1.5px solid;cursor:pointer;transition:transform .15s;position:relative}
+.pod:hover{transform:translateY(-3px)}
+.pod.gold{background:linear-gradient(160deg,rgba(255,215,0,.14),rgba(184,134,11,.07));border-color:rgba(255,215,0,.5);box-shadow:0 0 28px rgba(255,215,0,.15);min-height:200px}
+.pod.silver{background:linear-gradient(160deg,rgba(192,192,192,.1),rgba(140,140,140,.04));border-color:rgba(192,192,192,.35);min-height:175px}
+.pod.bronze{background:linear-gradient(160deg,rgba(205,127,50,.12),rgba(154,86,21,.04));border-color:rgba(205,127,50,.35);min-height:165px}
+.pod-medal{font-size:28px;margin-bottom:6px}
+.pod-av{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid}
+.pod-av img{width:100%;height:100%;object-fit:cover}
+.pod-name{font-family:var(--f-body);font-size:16px;font-weight:700;margin-bottom:2px}
+.pod-title{font-family:var(--f-body);font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.pod-wins{font-family:var(--f-display);font-size:28px;line-height:1}
+.pod-wins-lbl{font-family:var(--f-body);font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+
+/* Full standings */
+.standings{display:flex;flex-direction:column;gap:6px;margin-bottom:32px}
+.sr{display:grid;grid-template-columns:36px 44px 1fr 80px 80px 80px 80px 80px;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);transition:border-color .15s}
+.sr:hover{border-color:rgba(255,215,0,.25)}
+.sr-rank{font-family:var(--f-body);font-size:13px;color:rgba(255,255,255,.35);text-align:center}
+.sr-av{width:36px;height:36px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:17px;border:1.5px solid;flex-shrink:0}
+.sr-av img{width:100%;height:100%;object-fit:cover}
+.sr-name{font-family:var(--f-body);font-size:14px;font-weight:700}
+.sr-title{font-family:var(--f-body);font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:1px}
+.sr-stat{text-align:center}
+.sr-stat-num{font-family:var(--f-display);font-size:15px}
+.sr-stat-lbl{font-family:var(--f-body);font-size:8px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.sr-header{background:transparent;border-color:transparent;padding:4px 16px}
+.sr-header .sr-stat-lbl{font-size:9px;color:rgba(255,215,0,.5)}
+
+/* Records */
+.records-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+.rec-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,215,0,.15);border-radius:12px;padding:16px}
+.rec-icon{font-size:28px;margin-bottom:8px}
+.rec-label{font-family:var(--f-body);font-size:10px;color:rgba(255,215,0,.55);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px}
+.rec-value{font-family:var(--f-display);font-size:20px;line-height:1.2}
+.rec-sub{font-family:'Lato',sans-serif;font-size:11px;color:rgba(255,255,255,.45);margin-top:4px}
+
+/* v21 Trophy Room — the ten royal achievements */
+.trophy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:10px;margin-bottom:32px}
+.tcard{position:relative;background:linear-gradient(165deg,rgba(255,215,0,.09),rgba(255,255,255,.03) 55%);border:1.5px solid rgba(255,215,0,.4);border-radius:12px;padding:12px 10px 10px;text-align:center;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.tcard:hover{transform:translateY(-3px);box-shadow:0 6px 24px rgba(255,215,0,.18)}
+.tcard.unclaimed{background:rgba(255,255,255,.025);border-color:rgba(255,255,255,.1);opacity:.75}
+.tcard.unclaimed:hover{box-shadow:none}
+.t-icon{font-size:25px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 0 10px rgba(255,215,0,.35))}
+.tcard.unclaimed .t-icon{filter:grayscale(.7);opacity:.5}
+.t-title{font-family:var(--f-display);font-size:11.5px;background:linear-gradient(180deg,#FFD700,#b8860b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.03em;margin-bottom:2px}
+.t-desc{font-family:'Lato',sans-serif;font-size:9px;color:rgba(255,255,255,.4);min-height:22px;margin-bottom:8px}
+.t-holder{display:flex;align-items:center;justify-content:center;gap:6px}
+.t-av{width:26px;height:26px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:13px;border:1.5px solid rgba(255,215,0,.7);flex-shrink:0}
+.t-av img{width:100%;height:100%;object-fit:cover}
+.t-hname{font-family:var(--f-body);font-size:11.5px;font-weight:700;text-align:left}
+.t-stat{font-family:var(--f-body);font-size:9px;color:rgba(255,215,0,.75);letter-spacing:.05em;margin-top:1px;text-align:left}
+.t-unclaimed{font-family:var(--f-body);font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.18em;text-transform:uppercase;padding:8px 0}
+.t-new{position:absolute;top:8px;right:-26px;transform:rotate(38deg);background:linear-gradient(180deg,#FFD700,#c9a227);color:#1a0a3a;font-family:var(--f-body);font-size:8px;font-weight:800;letter-spacing:.12em;padding:2px 28px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* Game history */
+.game-list{display:flex;flex-direction:column;gap:8px}
+.game-row{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:13px 18px;display:flex;align-items:center;gap:14px;transition:border-color .15s}
+.game-row:hover{border-color:rgba(255,215,0,.25)}
+.game-date{font-family:var(--f-body);font-size:11px;color:rgba(255,215,0,.55);letter-spacing:.08em;min-width:100px}
+.game-name{flex:1;font-family:var(--f-body);font-size:13px;font-weight:700;color:#fff}
+.game-winner{display:flex;align-items:center;gap:8px;font-family:var(--f-body);font-size:12px}
+.game-winner-av{width:26px;height:26px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:13px;border:1px solid}
+.game-winner-av img{width:100%;height:100%;object-fit:cover}
+.game-qs{font-family:var(--f-body);font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.08em;min-width:60px;text-align:right}
+.podium-section{margin-bottom:32px}
+.empty{text-align:center;padding:48px 20px;font-family:var(--f-body);font-size:14px;color:rgba(255,215,0,.5);letter-spacing:.15em}
+
+/* Bar chart */
+.bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:5px}
+.bar-label{font-family:var(--f-body);font-size:11px;color:rgba(255,255,255,.65);min-width:110px}
+.bar-track{flex:1;height:16px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden}
+.bar-fill{height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:7px;font-family:var(--f-body);font-size:9px;font-weight:700;color:#0a0a1a;min-width:20px}
+.bar-num{font-family:var(--f-display);font-size:12px;min-width:32px;text-align:right}
+</style>
+</head>
+<body>
+<script>
+// v12: apply persisted font choice from host's localStorage
+try {
+  var f = localStorage.getItem('kdcFont');
+  if (f === 'copse') document.body.classList.add('font-copse');
+  if (f === 'boogaloo') document.body.classList.add('font-boogaloo');
+} catch(e){}
+</script>
+<div class="stars"></div>
+<div class="site-header">
+  <div>
+    <div class="header-logo">👑 KDC AI Quiz 2026</div>
+    <div class="header-sub">All-Time Royal Records &middot; updated Jul 3, 2026</div>
+  </div>
+  <div class="nav-btns">
+    <a class="nav-btn" href="/">🏠 Home</a>
+    <button class="nav-btn close" onclick="window.close()">✕ Close Window</button>
+  </div>
+</div>
+
+<div class="main" id="main">
+  <div class="empty">👑 Loading the Royal Archives...</div>
+</div>
+
+<script>
+var KDC_STATIC = {"players":[{"id":"kingdad","name":"King Dad Chris","emoji":"👑","color":"#FFD700","title":"His Majesty"},{"id":"evan","name":"Evan","emoji":"🧠","color":"#f472b6","title":"The Brain"},{"id":"holden","name":"Holden","emoji":"🅷","color":"#34d399","title":"H Dawg"},{"id":"jbird","name":"J-Bird","emoji":"🐐","color":"#7dd3fc","title":"The GOAT"},{"id":"jennifer","name":"Jennifer Fu","emoji":"🧮","color":"#fb923c","title":"The Bean Counter"},{"id":"jettie","name":"Jettiepoo","emoji":"♠️","color":"#facc15","title":"The Wild Card"},{"id":"kabya","name":"Kabya","emoji":"✨","color":"#22d3ee","title":"The Charmer"},{"id":"mike","name":"Mike","emoji":"🚗","color":"#84cc16","title":"The Mechanic"},{"id":"moneymars","name":"Moneymars","emoji":"💰","color":"#fcd34d","title":"The Mogul"},{"id":"norah","name":"Norah","emoji":"❤️","color":"#a78bfa","title":"The Friend"},{"id":"patti","name":"Patti","emoji":"🛏️","color":"#f87171","title":"The Napper"},{"id":"tamara","name":"Tamara","emoji":"💃","color":"#ec4899","title":"The Dancer"}],"history":[{"id":1782960764848,"gameId":"g1782959675679-al134l","date":"2026-07-02T02:52:44.848Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","tamara","patti","moneymars","mike"],"scores":{"kingdad":1950,"evan":500,"jbird":2600,"jettie":-600,"tamara":3250,"patti":900,"moneymars":2300,"mike":600},"ranked":[{"id":"tamara","name":"Tamara","emoji":"💃","score":3250},{"id":"jbird","name":"J-Bird","emoji":"🐐","score":2600},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":2300},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":1950},{"id":"patti","name":"Patti","emoji":"🛏️","score":900},{"id":"mike","name":"Mike","emoji":"🚗","score":600},{"id":"evan","name":"Evan","emoji":"🧠","score":500},{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":-600}],"winner":"Tamara","winnerEmoji":"💃","questionsPlayed":20,"usedQuestions":["A cat 'slow blinks' at you. What does animal behaviorists say this actually signals?","Which bird is the only known species to have a venomous bite — using toxins it absorbs from the beetles it eats?","A group of jellyfish has a collective noun so dramatic it sounds made up. What is it?","The axolotl never undergoes metamorphosis into a land animal. What is the scientific term for this permanent larval state?","A shop manual says to torque lug nuts in a 'star pattern.' Why — not a circle?","Which fluid in your car is the ONLY one that gets MORE acidic as it ages — and that acidity is exactly why it must be flushed?","A car idles rough only when fully warmed up, but runs fine cold. The most likely culprit is which sensor?","Snap-on and Mac Tools sell pricier wrenches than Harbor Freight. The real metallurgical reason the price gap is justified is what?","Which cooking fat is so stable it was used to lubricate machinery before people realized it tasted great?","A 'Maillard reaction' is what gives seared steak its crust. What two things must combine to trigger it?","Why do chefs add a pinch of salt to chocolate desserts?","Searing meat 'seals in juices' is a classic cooking belief. What does science say actually happens?","Roald Dahl, author of Charlie and the Chocolate Factory, served as what during WWII?","Marie Curie won two Nobel Prizes — in Physics AND Chemistry. What makes this even more remarkable?","Before becoming a revolutionary, Che Guevara trained and worked as what profession?","Nikola Tesla had an intense phobia of what surprisingly common object?","KC's famous Worlds of Fun amusement park is named after a classic novel. Which one?","Elvis once played KC's Municipal Auditorium. That venue is famous for a wild 1967 record — what happened there?","KC's iconic Kauffman Stadium is nicknamed 'The K' — but what unusual water feature makes it stand out among MLB parks?","KC's crossroads arts district hosts a quirky annual event where art is installed in a very unexpected urban canvas. What is it?"]},{"id":1782959340685,"gameId":"g1782958335420-l22f8v","date":"2026-07-02T02:29:00.685Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","tamara","patti","moneymars","mike"],"scores":{"kingdad":1550,"evan":4250,"jbird":4250,"jettie":3550,"tamara":5750,"patti":4000,"moneymars":6600,"mike":1250},"ranked":[{"id":"moneymars","name":"Moneymars","emoji":"💰","score":6600},{"id":"tamara","name":"Tamara","emoji":"💃","score":5750},{"id":"evan","name":"Evan","emoji":"🧠","score":4250},{"id":"jbird","name":"J-Bird","emoji":"🐐","score":4250},{"id":"patti","name":"Patti","emoji":"🛏️","score":4000},{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":3550},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":1550},{"id":"mike","name":"Mike","emoji":"🚗","score":1250}],"winner":"Moneymars","winnerEmoji":"💰","questionsPlayed":20,"usedQuestions":["Lipstick leaves a mark. What shape does a kiss-print make?","Blush is applied to the cheeks to mimic what natural skin reaction?","What do you call the makeup that evens out your whole face before anything else goes on?","Elvis wore heavy black eyeliner on stage — what was the makeup artist term for that thick line drawn along the upper lash line?","How many sides does a rectangle have?","What do you call the bottom number in a fraction?","How many degrees are in a full circle?","How many sides does a hexagon have?","What instrument does Elton John famously play on almost every one of his hit songs?","The Beatles famously split up in 1970 — but which Beatle was the LAST to officially sign the legal dissolution papers?","Before 'Auto-Tune' was a music tool, it was invented to do something completely unrelated. What was its original purpose?","Which famous musician holds the record for the most Grammy nominations ever — surpassing even Beyoncé?","Ted Bundy escaped from prison — TWICE. What did he use the second time?","The Zodiac Killer taunted police with coded letters. How many of his ciphers remain UNSOLVED today?","D.B. Cooper hijacked a plane in 1971 and parachuted away with ransom cash. What was he wearing on his feet?","Con artist Frank Abagnale posed as many professionals. Which job did he famously NEVER impersonate?","What shape is a Reese's Peanut Butter Cup?","Candy corn is made of three colors. Which color is at the BOTTOM (widest end)?","Pop Rocks fizz in your mouth because they're packed with which trapped gas?","Which candy is named after the founder's favorite horse?"]},{"id":1782957882660,"gameId":"g1782956761910-q5khad","date":"2026-07-02T02:04:42.660Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","tamara","patti","moneymars","mike"],"scores":{"kingdad":3000,"evan":100,"jbird":3800,"jettie":1800,"tamara":3600,"patti":1500,"moneymars":4200,"mike":1500},"ranked":[{"id":"moneymars","name":"Moneymars","emoji":"💰","score":4200},{"id":"jbird","name":"J-Bird","emoji":"🐐","score":3800},{"id":"tamara","name":"Tamara","emoji":"💃","score":3600},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":3000},{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":1800},{"id":"patti","name":"Patti","emoji":"🛏️","score":1500},{"id":"mike","name":"Mike","emoji":"🚗","score":1500},{"id":"evan","name":"Evan","emoji":"🧠","score":100}],"winner":"Moneymars","winnerEmoji":"💰","questionsPlayed":15,"usedQuestions":["Which 80s toy let kids make colorful plastic charms using a heat gun?","The Fresh Prince of Bel-Air's theme song was performed by Will Smith — but what was his rapper name before fame?","Which 90s handheld virtual pet game required you to feed and clean up after it or it would die?","What does a car's 'MPG' actually stand for?","Which car brand's logo is a four-ringed chain — representing four companies that merged in 1932?","On a standard automatic gear shifter, what does the 'P' position physically do to stop the car rolling?","The Twist became a global craze in the 1960s — but which everyday object does the dance move actually mimic?","Breakdancing has an official Olympic name. What did the IOC call it when it debuted at the Paris 2024 Games?","The Viennese Waltz has a strict tempo rule in competition. Approximately how many beats per minute must it hit?","A fake news story spreads fastest when it makes you feel what?","A headline says 'Elvis Presley Alive Running Hot Dog Stand in Memphis.' What's the FIRST clue it's fake news?","Which of these is a real warning sign of a fake news website?","Selena Gomez went viral in early 2025 after crying on TikTok over what?","Ariana Grande's romance with Ethan Slater made headlines partly because he was married to whom when they met on set?","Which unexpected item did Sabrina Carpenter carry as her 'date' to the 2024 VMAs, turning heads on the red carpet?"]},{"id":1781744498915,"date":"2026-06-18T01:01:38.915Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars"],"scores":{"kingdad":3000,"evan":10530,"jbird":7850,"jettie":4250,"moneymars":7250},"ranked":[{"id":"evan","name":"Evan","emoji":"🧠","score":10530},{"id":"jbird","name":"J-Bird","emoji":"🐐","score":7850},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":7250},{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":4250},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":3000}],"winner":"Evan","winnerEmoji":"🧠","questionsPlayed":30,"usedQuestions":["Mike Brady installs ceiling fans, stands on a ladder to test one, gets clipped, and spins off into the garage wall. Which law launched Mike?","Carol Brady tries roller skating in the driveway, hits a pebble, and launches face-first into the pavement. Which law pulled Carol down so personally?","Greg Brady fires a tennis ball cannon he built for science class. It backfires, launches Greg backward into the fence. Which law is responsible?","Marcia Brady microwaves a sealed soup can to 'save time.' It explodes. Marcia's eyebrows do not survive. Which law cooked Marcia's confidence?","Bobby Brady rides his bike off a ramp, flies magnificently, then lands and skids 12 metres before stopping. Which law finally halted Bobby's glory?","Elvis owned a pink Cadillac — but which model was it?","Which country INVENTED the windshield wiper — accidentally, by a woman watching a trolley?","What color were the first STOP signs before red became standard?","A car's 'glove box' was named that for a very specific reason. What was originally stored there?","The Volkswagen Beetle was originally commissioned by which unexpected figure?","Saffron costs more per gram than gold — but what's the actual reason harvesting it is so insanely expensive?","Chefs 'bloom' spices in hot oil before cooking. What's the actual science making this worth the extra step?","A perfectly tempered chocolate bar makes a sharp SNAP. What physical property of cocoa butter creates that snap?","Which common cooking technique is scientifically closest to what happens inside a pressure cooker?","Why does fresh pineapple completely destroy jelly — making it impossible to set?","Which famous dance style was originally called 'Le Freak' by its Harlem ballroom creators?","Breakdancers call the move where you spin on your head a 'headspin' — but what household item did early B-boys use to practice it safely?","The Twist, which took America by storm in 1960, was actually banned in which surprising location due to 'moral concerns'?","In competitive ballroom dancing, what color is strictly FORBIDDEN on the competition floor because it clashes with judges' scoring sheets?","Michael Jackson's iconic 'moonwalk' wasn't invented by him — which performer did it first on a 1950s TV variety show?","Which dog breed's name literally means 'butterfly' in French — inspired by its distinctive ears?","The Basenji is famous for something it CAN'T do that every other dog can. What is it?","Which dog breed was once so sacred in ancient China that stealing one was punishable by death?","The Dalmatian is born completely spotless. When do their iconic spots first appear?","Which breed has a blue-black tongue — a trait it shares with only one other dog breed?","In Dream's most iconic manhunt, how many hunters chased him in the finale that broke YouTube records?","Dream's manhunt videos are edited to feel cinematic — but what does he famously NEVER use to gain a speed advantage?","Which obscure Minecraft mechanic did Dream exploit in manhunt to trap hunters underwater using a boat?","In manhunt, Dream once defeated the Ender Dragon using only items from which single biome — never leaving it before the End?","What is the REAL reason hunters in Dream manhunt always prioritize killing his horse before anything else?"]},{"id":1780872403728,"date":"2026-06-07T22:46:43.728Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars"],"scores":{"kingdad":2450,"evan":2350,"jbird":3550,"jettie":1350,"moneymars":750},"ranked":[{"id":"jbird","name":"J-Bird","emoji":"🐐","score":3550},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":2450},{"id":"evan","name":"Evan","emoji":"🧠","score":2350},{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":1350},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":750}],"winner":"J-Bird","winnerEmoji":"🐐","questionsPlayed":15,"usedQuestions":["A nurse is about to give an injection but the patient says 'I didn't consent to that.' What's the nurse's FIRST action?","Which vital sign is the LAST to change when a patient is going into shock — making it a dangerously deceptive late warning sign?","A nurse gives 500mg but the order says 250mg. After reporting, what's documented FIRST in the incident report?","Napoleon was once attacked by an army of what animal, forcing him to flee in embarrassment?","Which ancient empire used chocolate as CURRENCY — not food — and executed anyone caught counterfeiting it?","During WWI, the British army trained which unexpected animal to detect poison gas before humans could smell it?","In Among Us, what color was NOT available at the game's original launch in 2018?","Among Us has a rarely noticed detail: crewmates have no mouths — but what body part do Impostors secretly have that crewmates lack?","Among Us was nearly shut down before going viral. What were the devs actually working on when the game exploded in 2020?","Chimps can't swim — but what do wild chimps do when they encounter deep water they MUST cross?","Male orangutans can develop huge cheek pads called flanges — but what triggers their sudden growth?","Gorillas almost never drink water. How do they stay hydrated in the wild?","FIFA 2026 spans 3 countries. Which city is hosting matches in ALL THREE host nations' territory — just kidding, which U.S. city has the most 2026 World Cup games?","FIFA 2026 is the first World Cup with 48 teams. How many total matches will be played — a number Elvis fans might recognize as his age when he died?","FIFA 2026's official ball has a name. What is it called?"]},{"id":1780871186458,"date":"2026-06-07T22:26:26.458Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars"],"scores":{"kingdad":1500,"evan":2300,"jbird":3300,"jettie":3550,"moneymars":2600},"ranked":[{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":3550},{"id":"jbird","name":"J-Bird","emoji":"🐐","score":3300},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":2600},{"id":"evan","name":"Evan","emoji":"🧠","score":2300},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":1500}],"winner":"Jettiepoo","winnerEmoji":"♠️","questionsPlayed":15,"usedQuestions":["Jan rode her bicycle downhill with no brakes and flew 15 feet through the air before landing in Sam's delivery truck. Which law describes her trajectory?","Greg slipped off a diving board and fell 10 meters before hitting the water. What physics concept determined his speed at impact?","Bobby launched off a swing at max height and traveled 8 meters before landing in Alice's rose garden. What determined his range?","Marcia was struck by a football and fell backward into the pool. Newton's Third Law explains exactly what?","Sam the Butcher tossed a pork loin straight up — it returned at the same speed and flattened him. Which principle sealed his fate?","What famous jazz district in Kansas City is located at 18th & Vine?","The Kansas City Chiefs quarterback who has won multiple Super Bowls is:","Kansas City BBQ is best known for which signature element?","What river forms the northern border of Kansas City, Missouri?","Which legendary jazz musician — the King of Bebop — was born in Kansas City?","Whose Eras Tour became the first concert tour to gross over $1 billion?","Which Hollywood couple announced their split in 2024 after nearly 2 years of marriage?","Which actor returned to the MCU in a surprise role after playing Iron Man?","Rihanna's beauty brand launched with 40 foundation shades is called:","Which musician born in Tupelo, Mississippi is the King of Rock and Roll?","What two materials craft a wooden pickaxe in Minecraft?","What is the maximum stack size of an ender pearl?","Which mob was accidentally created when Notch mixed up pig height and width?","What is the rarest material in vanilla Minecraft, found only in the Nether?","What is the name of Minecraft's final boss in The End dimension?","Which band sang the iconic song \"Don't Stop Believin'\"?","Complete the Elvis lyric: \"You ain't nothing but a ___\"","Who holds the record for most Grammy wins of all time?","What instrument does Taylor Swift primarily play live?","Led Zeppelin's debut album was recorded in how many hours?","What is the fastest dog breed in the world?","Which dog breed is known as the \"Little Lion Dog\"?","What breed is Lassie?","Which is the oldest recognized dog breed, originating in ancient Egypt?","The Xoloitzcuintli is a hairless dog breed originating from which country?","What is the only mammal capable of true flight?","How many hearts does an octopus have?","What is a group of flamingos called?","Which animal has the highest blood pressure of any living creature?","The mantis shrimp can punch with the force of a bullet. How fast do their clubs travel in mph?"]},{"id":1780871057812,"date":"2026-06-07T22:24:17.812Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars"],"scores":{"kingdad":1500,"evan":2300,"jbird":3300,"jettie":3550,"moneymars":2600},"ranked":[{"id":"jettie","name":"Jettiepoo","emoji":"♠️","score":3550},{"id":"jbird","name":"J-Bird","emoji":"🐐","score":3300},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":2600},{"id":"evan","name":"Evan","emoji":"🧠","score":2300},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":1500}],"winner":"Jettiepoo","winnerEmoji":"♠️","questionsPlayed":15,"usedQuestions":["Crows hold 'funerals' for dead crows — but what's the REAL reason they gather around the body?","Horses can't vomit. What weird body quirk makes this physically impossible for them?","Dolphins have been observed doing something surprisingly reckless with pufferfish on purpose. What?","Elvis owned a Great Dane named Brutus — but which breed did he famously gift to his co-star Yvonne Lime after filming 'Loving You'?","The Xoloitzcuintli is one of the world's oldest breeds. What country officially declared it a national treasure?","The Norwegian Lundehund has 6 toes on each foot. What bizarre job was it literally bred to do?","Kansas City straddles two states — but which state's side has MORE of the city's population?","KC's famous BBQ style uses which wood almost exclusively — giving its smoke a distinctly sweet, heavy flavor?","The Kansas City Royals' name was chosen by a fan vote in 1968. What surprisingly unglamorous connection does the name actually reference?","Which Minecraft mob drops a 'Music Disc' ONLY when killed by a skeleton's arrow — not by the player?","Minecraft's Endermen speak a real language — their speech is actual English played how?","In Minecraft, what is the maximum number of enchantments a single item can legally hold at once?","A nurse checks a patient's ID band BEFORE giving meds. Which safety goal does this directly satisfy?","A patient's nail beds look bluish. What is the nursing term for this sneaky color change?","Which vital sign is the LAST to change when a patient is going into shock — making it nursing's sneakiest warning sign?"]},{"id":1780452064916,"date":"2026-06-03T02:01:04.916Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars","patti"],"scores":{"kingdad":2900,"evan":2900,"jbird":2800,"jettie":-700,"moneymars":1300,"patti":800},"ranked":[{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":2900},{"id":"evan","name":"Evan","emoji":"🎯","score":2900},{"id":"jbird","name":"J-Bird","emoji":"🦅","score":2800},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":1300},{"id":"patti","name":"Patti","emoji":"💃","score":800},{"id":"jettie","name":"Jettiepoo","emoji":"⚡","score":-700}],"winner":"King Dad Chris","winnerEmoji":"👑","questionsPlayed":15,"usedQuestions":["A nurse is preparing to administer an intramuscular injection into the ventrogluteal site. A student nurse asks why this site is often preferred over the dorsogluteal site. What is the MOST compelling safety reason?","A patient on a medical-surgical floor suddenly becomes confused, restless, and begins picking at their IV tubing at 2 AM. Before calling the physician, what should the nurse assess FIRST using basic clinical reasoning?","When performing nasogastric tube placement verification, the old 'auscultation method' — injecting air and listening for a gurgling sound — is now considered unreliable. What is the CURRENT gold-standard bedside method nurses use BEFORE this?","A classic French omelette should be removed from the pan while it still looks slightly undercooked inside. What is the French culinary term for this perfectly soft, just-set egg texture?","Before refrigerators existed, cooks used to store butter fresh for weeks using a surprising method involving a ceramic pot and cold water. What is this old-fashioned butter preservation technique called?","When you cry while cutting onions, it's because a gas reacts with the moisture in your eyes to form a mild acid. Which surprisingly familiar household acid does your eye actually produce in this moment?","Krispy Kreme's signature glaze is famously simple — but which unexpected ingredient gives it that iconic glossy, slightly crispy shell when it sets?","Krispy Kreme sells a donut that is technically a hole — the Glazed Donut Hole, marketed under what cheeky product name that sounds like it belongs in a children's cartoon?","Krispy Kreme's Original Glazed donut has been on the menu since 1937, but approximately how many calories does one single Original Glazed contain — a number so modest it surprises most people who assume the worst?","Billie Eilish recorded her entire debut album 'When We All Fall Asleep, Where Do We Go?' in a location so unusual it became part of music legend. Where was it recorded?","Sabrina Carpenter's smash hit 'Espresso' contains a lyric that references a surprisingly specific piece of coffee shop culture. But which instrument's riff was secretly sampled from a 1970s Italian pop song to give it that retro, breezy feel?","Taylor Swift's Eras Tour became the first concert tour in history to cross a jaw-dropping revenue milestone. What record did it shatter?","Zoo Tampa's chimpanzees have been observed doing something surprisingly human when keepers bring in a mirror — but what do the chimps almost always do FIRST before any self-recognition behavior kicks in?","Zoo Tampa is home to a troop of squirrel monkeys — tiny primates with an outsized personality. Elvis Presley was famously gifted a spider monkey named Scatter, who reportedly terrorized Graceland staff. What trait do squirrel monkeys and spider monkeys SHARE that would have made Scatter such a handful?","Zoo Tampa's primate team uses a technique called 'positive reinforcement training' with their gorillas. What surprisingly practical MEDICAL reason — not just behavioral — makes this training absolutely essential for big apes in captivity?"]},{"id":1780450764844,"date":"2026-06-03T01:39:24.844Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars","patti"],"scores":{"kingdad":2500,"evan":6040,"jbird":3800,"jettie":400,"moneymars":-1900,"patti":4100},"ranked":[{"id":"evan","name":"Evan","emoji":"🎯","score":6040},{"id":"patti","name":"Patti","emoji":"💃","score":4100},{"id":"jbird","name":"J-Bird","emoji":"🦅","score":3800},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":2500},{"id":"jettie","name":"Jettiepoo","emoji":"⚡","score":400},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":-1900}],"winner":"Evan","winnerEmoji":"🎯","questionsPlayed":20,"usedQuestions":["Peter Brady climbs onto the roof to retrieve a frisbee, slips, and accelerates faster and faster toward the ground — hitting the bushes at maximum regret. Which physics law governs Peter's increasingly speedy descent?","Tiger the dog chases his tail so fast inside the Brady kitchen that he builds up a static charge, licks the metal refrigerator handle, and zaps himself into the afterlife. Alice watches in horror. Which physics principle sent Tiger to doggy heaven?","Cindy Brady insists on spinning in her desk chair while drinking a milkshake. She spins faster and faster as she pulls her arms in, and the milkshake achieves escape velocity directly into her face — and then her lungs. Which law sealed Cindy's frothy fate?","Sam the Butcher proudly demonstrates his new vacuum-sealed meat storage system. He heroically climbs inside to 'show how airtight it is,' the lid closes, and the pressure differential does the rest. Which law explains the crushing consequence of Sam's very last sales pitch?","In Minecraft's code, villagers were originally going to have a completely different career system. What was the scrapped mechanic that was removed before the 1.14 Village & Pillage update that would have let players influence villager jobs?","Minecraft's 'Farlands' — the bizarre terrain corruption that appeared at extreme map distances — was never intentionally removed by Mojang. What actually caused it to silently vanish from the game in Beta 1.8?","Minecraft has a hidden, almost never-triggered game mechanic where a specific hostile mob will completely stop attacking the player and sit down passively. Which mob is it, and what triggers this bizarre behavior?","Minecraft's End dimension has a deeply obscure lore detail hidden in the End Poem — the text shown after defeating the Ender Dragon. Who actually WROTE the End Poem, and what surprising constraint did Mojang give the author?","Rugby legend Jonah Lomu was so devastatingly powerful that one famous coach reportedly compared watching him to seeing which Elvis Presley song performed live — unstoppable, larger than life, and impossible to look away from? (The song shares its name with a move defenders wished they could use on Lomu.)","In rugby union, a player who is temporarily sent off the field for a foul must sit in what is informally called the 'sin bin' — but for exactly how many minutes must they wait before returning?","The Rugby World Cup trophy is officially named after which pioneering figure in the sport — a name most casual fans couldn't pick out of a lineup?","Which country holds the record for the most consecutive Rugby World Cup final appearances, having reached the final in every tournament between 1987 and 1995?","If you wrote out every whole number from 1 to 20 and counted how many times the digit '1' appears, how many times would you find it?","A pizza is cut into 8 equal slices. You eat 3 slices, your friend eats 2, and 1 slice falls on the floor. What percentage of the pizza is left uneaten (including the floor slice)?","Which number is the ONLY positive number that equals exactly TWICE the sum of its own digits?","A clock shows 3:15. What is the EXACT angle between the minute hand and the hour hand at that moment?","Before *Friends* made her a household name, Jennifer Aniston worked a series of odd jobs. Which surprisingly unglamorous job did she hold just before landing her big break, which she later said taught her more about 'real people' than any acting class?","The iconic 90s slap bracelet — that springy toy banned in several schools — was actually invented by a high school shop teacher in 1990. What was his surprisingly relatable reason for inventing it?","The 1989 music video for 'Like a Prayer' by Madonna caused a massive controversy and got her dropped by which major global brand that had just signed her to a multi-million dollar endorsement deal?","The classic 80s arcade game *Pac-Man* was originally designed with a completely different name. What was its original Japanese title before it was changed for Western markets because the name was considered mildly rude in English?"]},{"id":1780449321875,"date":"2026-06-03T01:15:21.875Z","name":"KDC AI Quiz 2026","players":["kingdad","evan","jbird","jettie","moneymars","patti"],"scores":{"kingdad":2750,"evan":1350,"jbird":4950,"jettie":6700,"moneymars":4250,"patti":2950},"ranked":[{"id":"jettie","name":"Jettiepoo","emoji":"⚡","score":6700},{"id":"jbird","name":"J-Bird","emoji":"🦅","score":4950},{"id":"moneymars","name":"Moneymars","emoji":"💰","score":4250},{"id":"patti","name":"Patti","emoji":"💃","score":2950},{"id":"kingdad","name":"King Dad Chris","emoji":"👑","score":2750},{"id":"evan","name":"Evan","emoji":"🎯","score":1350}],"winner":"Jettiepoo","winnerEmoji":"⚡","questionsPlayed":20,"usedQuestions":["Elvis Presley was famously rejected by a band before his solo career took off. Which group turned him down, telling him he'd 'never make it' as a singer?","Before becoming a global superstar, Rihanna was reportedly afraid of this surprising everyday object, a phobia she once admitted in an interview:","Keanu Reeves secretly funded the post-production of which Oscar-winning film using his own personal salary advance, without ever seeking public credit for it?","Mariah Carey holds a surprisingly specific world record that has nothing to do with music. What is it?","Which A-list celebrity once worked as a hat-check person and a coat-check attendant at the same nightclub simultaneously, just to earn enough money to keep acting classes going?","What everyday object inspired the name of the dance move 'The Sprinkler'?","Which famous dance is named after a city in South Carolina, USA, where it originally became popular in the 1920s?","In ballet, what is the term for dancing on the very tips of the toes using specially reinforced shoes?","The viral 'Macarena' dance craze of the 1990s was performed to a song by which duo?","Which animal's movement is the Floss dance most commonly compared to?","A nurse notices a patient's hospital gown keeps slipping off one shoulder during vitals. What is the PRIMARY nursing principle being applied when the nurse fixes the gown before continuing?","Which finger is typically AVOIDED when performing a capillary blood glucose fingerstick on an adult patient?","When a nurse documents 'patient ambulated 10 feet with steady gait,' what type of nursing documentation is this?","A patient asks why nurses use the LEFT arm more often to take blood pressure. What is the REAL reason this is a common practice?","In the nursing mnemonic 'ADPIE,' what does the letter 'E' stand for?","A group of flamingos is called a 'flamboyance,' but what is the surprisingly poetic collective noun for a group of owls?","Wombats are the only animals in the world known to produce what unusually shaped biological output?","The mantis shrimp can punch with the force of a bullet, but what is its even more mind-bending visual superpower?","Which animal is scientifically documented to be able to recognize itself in a mirror — a classic test of self-awareness — but ONLY when the mirror is placed horizontally on the floor?","A tardigrade (water bear) can survive in the vacuum of space, extreme radiation, and near absolute zero — but what surprisingly ordinary thing can actually kill it fairly easily?"]}]};
+var _realFetch = window.fetch;
+window.fetch = function(u){
+  if (u === "/api/players") return Promise.resolve({ json: function(){ return Promise.resolve({ players: KDC_STATIC.players }); } });
+  if (u === "/api/history") return Promise.resolve({ json: function(){ return Promise.resolve({ history: KDC_STATIC.history }); } });
+  return _realFetch.apply(window, arguments);
+};
+</script>
+<script>
+// ─── KDC AI Quiz — Achievements Engine (v21) ─────────────────────────────────
+// Shared by leaderboard.html (Trophy Room grid) and host.html (game-end toasts).
+// Computes the ten royal achievements from saved history. Per-question awards
+// read game.questionLog (v21+); older games don't count — forward-only by design.
+var KDC_ACHIEVEMENTS = (function(){
+  var DEFS = [
+    { key:'humbug',    icon:'\uD83D\uDE20', title:'The HumBug',       desc:'Most first-wrong answers, all time' },
+    { key:'crown',     icon:'\u26A1',       title:'Fastest Crown',    desc:'Most first-correct speed bonuses' },
+    { key:'lonewolf',  icon:'\uD83D\uDC3A', title:'Lone Wolf',        desc:'Most lone-correct answers' },
+    { key:'hotstreak', icon:'\uD83D\uDD25', title:'Hot Streak',       desc:'Longest correct run in one game (min 3)' },
+    { key:'court',     icon:'\u2696\uFE0F', title:'Courtroom Royalty',desc:'Most challenge flags won' },
+    { key:'gambler',   icon:'\uD83C\uDFB2', title:'Riverboat Gambler',desc:'Biggest single Double Trouble win' },
+    { key:'comeback',  icon:'\uD83D\uDE80', title:'Comeback Kid',     desc:'Biggest rank climb after halftime' },
+    { key:'perfect',   icon:'\uD83D\uDCAF', title:'Perfect Game',     desc:'Flawless game — 8+ answered, all correct' },
+    { key:'dynasty',   icon:'\uD83C\uDFC6', title:'Dynasty',          desc:'Most all-time game wins' },
+    { key:'iron',      icon:'\uD83C\uDFAA', title:'Iron Contestant',  desc:'Most games played' }
+  ];
+
+  function blank(){ return { humbug:0, humbugLast:'', fb:0, lb:0, faced:0, hot:0, hotDate:'',
+    chWin:0, chTry:0, dtBest:0, dtCareer:0, climb:-99, climbSwing:0,
+    perfectN:0, perfectDate:'', wins:0, games:0, first:'' }; }
+
+  function compute(history, players){
+    var P = {}; (players||[]).forEach(function(p){ P[p.id]=true; });
+    var S = {};
+    function st(id){ if(!S[id]) S[id]=blank(); return S[id]; }
+
+    var games = (history||[]).slice().reverse(); // oldest → newest (earliest record holds ties)
+    games.forEach(function(g){
+      var ids = Object.keys(g.scores||{}).filter(function(id){ return P[id]; });
+      ids.forEach(function(id){ var s=st(id); s.games++; if(!s.first) s.first=g.date||''; });
+      if (!g.teamPlay && g.ranked && g.ranked[0] && P[g.ranked[0].id]) st(g.ranked[0].id).wins++;
+      if (g.humbugs) Object.keys(g.humbugs).forEach(function(id){
+        if(P[id]){ st(id).humbug += g.humbugs[id]||0; st(id).humbugLast = g.date||''; }
+      });
+      var log = g.questionLog||[];
+      if (!log.length) return;
+
+      var cur={}, cum={}, halfCum=null, gAns={}, gFlaw={};
+      var halfIdx = Math.max(1, Math.floor(log.length/2));
+      log.forEach(function(e, qi){
+        Object.keys(e.ans||{}).forEach(function(id){
+          if(!P[id]) return;
+          var a=e.ans[id], s=st(id);
+          cum[id]=(cum[id]||0)+(a.pts||0)+(a.fb||0)+(a.lb||0);
+          if (a.passed) return;
+          s.faced++; gAns[id]=(gAns[id]||0)+1;
+          if (a.fb>0) s.fb++;
+          if (a.lb>0) s.lb++;
+          if (a.ok && a.w>0){ if(a.w>s.dtBest) s.dtBest=a.w; s.dtCareer+=a.w; }
+          if (a.ok){
+            cur[id]=(cur[id]||0)+1;
+            if (cur[id] > s.hot){ s.hot=cur[id]; s.hotDate=g.date||''; }
+          } else {
+            cur[id]=0; gFlaw[id]=true;
+          }
+        });
+        if (e.challenged && e.challenged.playerId && P[e.challenged.playerId]){
+          var cs = st(e.challenged.playerId);
+          cs.chTry++;
+          if (e.challenged.verdict==='upheld'||e.challenged.verdict==='alternative') cs.chWin++;
+        }
+        if (qi === halfIdx-1){ halfCum={}; Object.keys(cum).forEach(function(id){ halfCum[id]=cum[id]; }); }
+      });
+
+      // Comeback Kid — rank at halftime vs final rank
+      if (halfCum && g.ranked && g.ranked.length>1 && log.length>=4){
+        var halfOrder = Object.keys(g.scores||{}).filter(function(id){ return P[id]; })
+          .sort(function(a,b){ return (halfCum[b]||0)-(halfCum[a]||0); });
+        g.ranked.forEach(function(r, fi){
+          if(!P[r.id]) return;
+          var hi = halfOrder.indexOf(r.id); if(hi===-1) return;
+          var climb = hi - fi, s = st(r.id);
+          if (climb > s.climb){ s.climb=climb; s.climbSwing=(g.scores[r.id]||0)-(halfCum[r.id]||0); }
+        });
+      }
+      // Perfect Game — 8+ answered, zero wrong
+      Object.keys(gAns).forEach(function(id){
+        if (gAns[id]>=8 && !gFlaw[id] && gAns[id] > st(id).perfectN){
+          st(id).perfectN=gAns[id]; st(id).perfectDate=g.date||'';
+        }
+      });
+    });
+
+    // Pick a holder per achievement: primary value desc, then tie-break chain
+    function pick(val, tbs){
+      var best=null, ids=Object.keys(S);
+      ids.forEach(function(id){
+        var v=val(S[id]); if(v<=0) return;
+        if(!best){ best={id:id,v:v}; return; }
+        var bv=val(S[best.id]);
+        if (v>bv){ best={id:id,v:v}; return; }
+        if (v<bv) return;
+        for (var i=0;i<tbs.length;i++){
+          var d = tbs[i](S[id]) - tbs[i](S[best.id]);
+          if (d>0){ best={id:id,v:v}; return; }
+          if (d<0) return;
+        }
+      });
+      return best;
+    }
+    function fmt(n){ return (n||0).toLocaleString('en-US'); }
+    var out = {};
+    var h;
+    h=pick(function(s){return s.humbug;},[function(s){return s.games?s.humbug/s.games:0;},function(s){return Date.parse(s.humbugLast)||0;}]);
+    out.humbug   = h && { id:h.id, value:h.v, stat: fmt(h.v)+' first-wrong answers' };
+    h=pick(function(s){return s.fb;},[function(s){return s.faced?s.fb/s.faced:0;}]);
+    out.crown    = h && { id:h.id, value:h.v, stat: fmt(h.v)+' speed bonuses' };
+    h=pick(function(s){return s.lb;},[function(s){return s.faced?s.lb/s.faced:0;}]);
+    out.lonewolf = h && { id:h.id, value:h.v, stat: fmt(h.v)+' lone-correct answers' };
+    h=pick(function(s){return s.hot>=3?s.hot:0;},[function(s){return -(Date.parse(s.hotDate)||0);}]);
+    out.hotstreak= h && { id:h.id, value:h.v, stat: fmt(h.v)+' correct in a row' };
+    h=pick(function(s){return s.chWin;},[function(s){return s.chTry?s.chWin/s.chTry:0;}]);
+    out.court    = h && { id:h.id, value:h.v, stat: fmt(h.v)+' challenges won' };
+    h=pick(function(s){return s.dtBest;},[function(s){return s.dtCareer;}]);
+    out.gambler  = h && { id:h.id, value:h.v, stat: '+'+fmt(h.v)+' single wager' };
+    h=pick(function(s){return s.climb>0?s.climb:0;},[function(s){return s.climbSwing;}]);
+    out.comeback = h && { id:h.id, value:h.v, stat: 'climbed '+fmt(h.v)+(h.v===1?' spot':' spots') };
+    h=pick(function(s){return s.perfectN;},[]);
+    out.perfect  = h && { id:h.id, value:h.v, stat: fmt(h.v)+' for '+fmt(h.v) };
+    h=pick(function(s){return s.wins;},[function(s){return s.games?s.wins/s.games:0;}]);
+    out.dynasty  = h && { id:h.id, value:h.v, stat: fmt(h.v)+(h.v===1?' win':' wins') };
+    h=pick(function(s){return s.games;},[function(s){return -(Date.parse(s.first)||0);}]);
+    out.iron     = h && { id:h.id, value:h.v, stat: fmt(h.v)+(h.v===1?' game':' games')+' played' };
+
+    return DEFS.map(function(d){
+      return { key:d.key, icon:d.icon, title:d.title, desc:d.desc, holder: out[d.key]||null };
+    });
+  }
+
+  // Diff full history vs history-without-newest-game → toast-worthy changes
+  function newlyEarned(history, players){
+    if (!history || !history.length) return [];
+    var withAll  = compute(history, players);
+    var without  = compute(history.slice(1), players); // history is newest-first
+    var news = [];
+    withAll.forEach(function(a, i){
+      var b = without[i];
+      if (!a.holder) return;
+      if (!b.holder) { news.push({ key:a.key, icon:a.icon, title:a.title, holder:a.holder, kind:'claimed' }); return; }
+      if (a.holder.id !== b.holder.id) { news.push({ key:a.key, icon:a.icon, title:a.title, holder:a.holder, kind:'taken' }); return; }
+      if (a.holder.value !== b.holder.value) news.push({ key:a.key, icon:a.icon, title:a.title, holder:a.holder, kind:'improved' });
+    });
+    return news;
+  }
+
+  return { DEFS: DEFS, compute: compute, newlyEarned: newlyEarned };
+})();
+
+</script>
+<script>
+var PMAP = {}, ALL_PLAYERS = [], HISTORY = [];
+var MEDALS = ['🥇','🥈','🥉'];
+
+Promise.all([
+  fetch('/api/players').then(function(r){return r.json();}),
+  fetch('/api/history').then(function(r){return r.json();})
+]).then(function(results){
+  ALL_PLAYERS = results[0].players;
+  HISTORY     = results[1].history;
+  ALL_PLAYERS.forEach(function(p){ PMAP[p.id]=p; });
+  render();
+});
+
+function render(){
+  if(!ALL_PLAYERS.length){ document.getElementById('main').innerHTML='<div class="empty">No players found.</div>'; return; }
+
+  // ─── Compute stats ──────────────────────────────────────────────────────
+  var stats = {};
+  ALL_PLAYERS.forEach(function(p){
+    stats[p.id]={id:p.id,wins:0,games:0,totalPoints:0,bestGame:0,bestGameDate:'',streak:0,maxStreak:0,lastWon:false};
+  });
+
+  // Process history newest→oldest
+  var reversed = HISTORY.slice().reverse(); // oldest first for streak calc
+  reversed.forEach(function(game){
+    if(!game.ranked||!game.ranked.length) return;
+    game.ranked.forEach(function(r,i){
+      if(!stats[r.id]) return;
+      stats[r.id].games++;
+      stats[r.id].totalPoints += r.score||0;
+      if(r.score > stats[r.id].bestGame){ stats[r.id].bestGame=r.score; stats[r.id].bestGameDate=game.date; }
+      if(i===0){
+        stats[r.id].wins++;
+        stats[r.id].streak++;
+        if(stats[r.id].streak>stats[r.id].maxStreak) stats[r.id].maxStreak=stats[r.id].streak;
+        stats[r.id].lastWon=true;
+      } else {
+        stats[r.id].streak=0;
+        stats[r.id].lastWon=false;
+      }
+    });
+  });
+
+  var playerStats = ALL_PLAYERS.map(function(p){ return Object.assign({},p,stats[p.id]||{}); })
+    .filter(function(p){ return p.games>0; })
+    .sort(function(a,b){ return b.wins-a.wins||b.totalPoints-a.totalPoints; });
+
+  var noHistory = HISTORY.length === 0;
+
+  var html = '';
+
+  // ─── Top Stats ──────────────────────────────────────────────────────────
+  var totalGames    = HISTORY.length;
+  var totalQs       = HISTORY.reduce(function(s,g){return s+(g.questionsPlayed||0);},0);
+  var topWinner     = playerStats[0];
+  var highestScore  = playerStats.reduce(function(best,p){return p.bestGame>best?p.bestGame:best;},0);
+
+  html += '<div class="top-stats">';
+  html += '<div class="stat-card"><div class="stat-num">'+totalGames+'</div><div class="stat-label">Games Played</div></div>';
+  html += '<div class="stat-card"><div class="stat-num">'+totalQs+'</div><div class="stat-label">Questions Asked</div></div>';
+  html += '<div class="stat-card"><div class="stat-num">'+ALL_PLAYERS.length+'</div><div class="stat-label">Players</div></div>';
+  html += '<div class="stat-card"><div class="stat-num" style="font-size:22px;padding-top:6px">'+(topWinner?avHtml(topWinner,32)+' '+topWinner.name:'–')+'</div><div class="stat-label">Reigning Champ</div></div>';
+  html += '</div>';
+
+  if(noHistory){
+    html += '<div class="empty">No games saved yet.<br><br>Play a game and hit 💾 Save on the scores screen to start building your records.</div>';
+    document.getElementById('main').innerHTML=html; return;
+  }
+
+  // ─── Podium ─────────────────────────────────────────────────────────────
+  if(playerStats.length>=1){
+    html += '<div class="podium-section">';
+    html += '<div class="section-title">🏆 Hall of Fame</div>';
+    html += '<div class="section-sub">All-time standings</div>';
+    html += '<div class="podium">';
+    var podOrder = playerStats.length>=3 ? [playerStats[1],playerStats[0],playerStats[2]] : playerStats.length===2 ? [playerStats[1],playerStats[0],null] : [null,playerStats[0],null];
+    var podClasses = ['silver','gold','bronze'];
+    podOrder.forEach(function(p,i){
+      if(!p){html+='<div></div>';return;}
+      var rank = playerStats.indexOf(p);
+      html += '<div class="pod '+podClasses[i]+'">';
+      html += '<div class="pod-medal">'+(MEDALS[rank]||'')+'</div>';
+      html += '<div class="pod-av" style="background:'+p.color+'20;border-color:'+p.color+'">'+avInner(p)+'</div>';
+      html += '<div class="pod-name" style="color:'+p.color+'">'+p.name+'</div>';
+      html += '<div class="pod-title">'+p.title+'</div>';
+      html += '<div class="pod-wins" style="color:'+p.color+'">'+p.wins+'</div>';
+      html += '<div class="pod-wins-lbl">Wins</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ─── v21 Trophy Room — the ten royal achievements ────────────────────────
+  try {
+    var trophies = KDC_ACHIEVEMENTS.compute(HISTORY, ALL_PLAYERS);
+    var fresh = {}; KDC_ACHIEVEMENTS.newlyEarned(HISTORY, ALL_PLAYERS).forEach(function(n){ fresh[n.key]=true; });
+    html += '<div class="section-title">🏅 Trophy Room</div>';
+    html += '<div class="section-sub">The ten royal achievements · forward-only from July 2026</div>';
+    html += '<div class="trophy-grid">';
+    trophies.forEach(function(t){
+      var p = t.holder && PMAP[t.holder.id];
+      if (p) {
+        html += '<div class="tcard">'
+          + (fresh[t.key] ? '<div class="t-new">NEW</div>' : '')
+          + '<div class="t-icon">'+t.icon+'</div>'
+          + '<div class="t-title">'+t.title+'</div>'
+          + '<div class="t-desc">'+t.desc+'</div>'
+          + '<div class="t-holder"><div class="t-av" style="background:'+(p.color||'#FFD700')+'20">'+avInner(p)+'</div>'
+          + '<div><div class="t-hname" style="color:'+(p.color||'#fff')+'">'+p.name+'</div>'
+          + '<div class="t-stat">'+t.holder.stat+'</div></div></div>'
+          + '</div>';
+      } else {
+        html += '<div class="tcard unclaimed">'
+          + '<div class="t-icon">'+t.icon+'</div>'
+          + '<div class="t-title">'+t.title+'</div>'
+          + '<div class="t-desc">'+t.desc+'</div>'
+          + '<div class="t-unclaimed">👑 Unclaimed</div>'
+          + '</div>';
+      }
+    });
+    html += '</div>';
+  } catch(e) { console.error('trophy room:', e); }
+
+  // ─── Full Standings ──────────────────────────────────────────────────────
+  html += '<div class="section-title">📊 Full Standings</div>';
+  html += '<div class="section-sub">All players · sorted by wins</div>';
+  html += '<div class="standings">';
+  // Header
+  html += '<div class="sr sr-header"><div></div><div></div><div></div>'
+    +'<div class="sr-stat"><div class="sr-stat-lbl">Wins</div></div>'
+    +'<div class="sr-stat"><div class="sr-stat-lbl">Games</div></div>'
+    +'<div class="sr-stat"><div class="sr-stat-lbl">Win %</div></div>'
+    +'<div class="sr-stat"><div class="sr-stat-lbl">Total Pts</div></div>'
+    +'<div class="sr-stat"><div class="sr-stat-lbl">Best Game</div></div>'
+    +'</div>';
+  playerStats.forEach(function(p,i){
+    var winPct = p.games ? Math.round(p.wins/p.games*100) : 0;
+    html += '<div class="sr">'
+      +'<div class="sr-rank">'+(MEDALS[i]||('#'+(i+1)))+'</div>'
+      +'<div class="sr-av" style="background:'+p.color+'20;border-color:'+p.color+'">'+avInner(p)+'</div>'
+      +'<div><div class="sr-name" style="color:'+p.color+'">'+p.name+'</div><div class="sr-title">'+p.title+'</div></div>'
+      +'<div class="sr-stat"><div class="sr-stat-num" style="color:'+p.color+'">'+p.wins+'</div></div>'
+      +'<div class="sr-stat"><div class="sr-stat-num">'+p.games+'</div></div>'
+      +'<div class="sr-stat"><div class="sr-stat-num">'+winPct+'%</div></div>'
+      +'<div class="sr-stat"><div class="sr-stat-num">'+p.totalPoints.toLocaleString()+'</div></div>'
+      +'<div class="sr-stat"><div class="sr-stat-num" style="color:'+p.color+'">'+p.bestGame.toLocaleString()+'</div></div>'
+      +'</div>';
+  });
+  html += '</div>';
+
+  // ─── Records ─────────────────────────────────────────────────────────────
+  var mostWins   = playerStats[0];
+  var bestSingle = playerStats.reduce(function(b,p){return p.bestGame>b.bestGame?p:b;},playerStats[0]);
+  var bestStreak = playerStats.reduce(function(b,p){return p.maxStreak>b.maxStreak?p:b;},playerStats[0]);
+  var mostGames  = playerStats.reduce(function(b,p){return p.games>b.games?p:b;},playerStats[0]);
+  var bestAvg    = playerStats.filter(function(p){return p.games>0;}).reduce(function(b,p){
+    var avg=p.totalPoints/p.games; var bavg=b.totalPoints/b.games; return avg>bavg?p:b;
+  },playerStats[0]);
+  var winRate    = playerStats.filter(function(p){return p.games>=2;}).reduce(function(b,p){
+    var wr=p.wins/p.games; var bwr=b.wins/b.games; return wr>bwr?p:b;
+  },playerStats[0]);
+
+  html += '<div class="section-title">🌟 Records</div>';
+  html += '<div class="section-sub">All-time achievements</div>';
+  html += '<div class="records-grid">';
+  html += recCard('👑','Most Wins',mostWins?(avHtml(mostWins,24)+' '+mostWins.name+' — '+mostWins.wins+' wins'):'–','');
+  html += recCard('💯','Best Single Game',bestSingle?(avHtml(bestSingle,24)+' '+bestSingle.name):'–',bestSingle?bestSingle.bestGame.toLocaleString()+' pts · '+fmtDate(bestSingle.bestGameDate):'');
+  html += recCard('🔥','Longest Win Streak',bestStreak?(avHtml(bestStreak,24)+' '+bestStreak.name+' — '+bestStreak.maxStreak+' in a row'):'–','');
+  html += recCard('📈','Best Win Rate',winRate?(avHtml(winRate,24)+' '+winRate.name+' — '+Math.round(winRate.wins/winRate.games*100)+'%'):'–',winRate?winRate.wins+' wins / '+winRate.games+' games':'');
+  html += recCard('📊','Highest Avg Score',bestAvg?(avHtml(bestAvg,24)+' '+bestAvg.name):'–',bestAvg?Math.round(bestAvg.totalPoints/bestAvg.games).toLocaleString()+' pts per game':'');
+  html += recCard('🎮','Most Games Played',mostGames?(avHtml(mostGames,24)+' '+mostGames.name+' — '+mostGames.games+' games'):'–','');
+  html += '</div>';
+
+  // ─── Win leaders bar chart ────────────────────────────────────────────────
+  html += '<div class="section-title">🏅 Win Leaders</div>';
+  html += '<div class="section-sub">Total first-place finishes</div>';
+  var maxWins = playerStats[0] ? playerStats[0].wins : 1;
+  html += '<div style="max-width:600px;margin-bottom:32px">';
+  playerStats.slice(0,8).forEach(function(p){
+    var pct = maxWins ? Math.max(8, Math.round(p.wins/maxWins*100)) : 8;
+    html += '<div class="bar-wrap">'
+      +'<div class="bar-label">'+avHtml(p,20)+' '+p.name+'</div>'
+      +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+p.color+'">'+( pct>20?p.wins:'' )+'</div></div>'
+      +'<div class="bar-num" style="color:'+p.color+'">'+p.wins+'</div>'
+      +'</div>';
+  });
+  html += '</div>';
+
+  // ─── Game History ─────────────────────────────────────────────────────────
+  html += '<div class="section-title">📅 Game History</div>';
+  html += '<div class="section-sub">Every KDC quiz night</div>';
+  html += '<div class="game-list">';
+  HISTORY.forEach(function(game){
+    var wp = game.ranked && game.ranked[0] ? PMAP[game.ranked[0].id] : null;
+    var score = game.ranked && game.ranked[0] ? game.ranked[0].score : 0;
+    html += '<div class="game-row">'
+      +'<div class="game-date">'+fmtDate(game.date)+'</div>'
+      +'<div class="game-name">'+game.name+'</div>'
+      +'<div class="game-winner">'
+        +(wp?'<div class="game-winner-av" style="background:'+wp.color+'20;border-color:'+wp.color+'">'+avInner(wp)+'</div><span style="color:'+(wp?wp.color:'#FFD700')+'">'+game.winner+'</span><span style="font-family:var(--f-display);color:rgba(255,215,0,.6)">'+score.toLocaleString()+'</span>':'–')
+      +'</div>'
+      +'<div class="game-qs">'+(game.questionsPlayed||0)+' Qs</div>'
+      +'</div>';
+  });
+  if(!HISTORY.length) html += '<div class="empty" style="padding:20px">No games yet — play and save a game to see history here.</div>';
+  html += '</div>';
+
+  document.getElementById('main').innerHTML = html;
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function avInner(p){
+  if(p.hasPhoto) return '<img src="/photos/'+p.id+'.jpg" style="width:100%;height:100%;object-fit:cover">';
+  return p.emoji;
+}
+function avHtml(p, size){
+  size = size||28;
+  return '<span style="display:inline-flex;width:'+size+'px;height:'+size+'px;border-radius:50%;overflow:hidden;border:1.5px solid '+p.color+';vertical-align:middle;background:'+p.color+'20;align-items:center;justify-content:center;font-size:'+(size*.5)+'px;flex-shrink:0">'+avInner(p)+'</span>';
+}
+function recCard(icon, label, value, sub){
+  return '<div class="rec-card"><div class="rec-icon">'+icon+'</div><div class="rec-label">'+label+'</div><div class="rec-value" style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">'+value+'</div>'+(sub?'<div class="rec-sub">'+sub+'</div>':'')+'</div>';
+}
+function fmtDate(iso){
+  if(!iso) return '';
+  try{var d=new Date(iso);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}catch(e){return iso.slice(0,10);}
+}
+</script>
+</body>
+</html>
